@@ -1,0 +1,166 @@
+<div class="ui-g">
+  <div class="ui-g-12" style="margin-top: -15px;">
+
+    <h2>
+      <i class="material-icons" style="vertical-align:middle">build</i> Funcionalidades</h2>
+
+    <div class="card shadow-box ui-shadow-3">
+
+      <form autocomplete="off">
+
+        <p-growl [(value)]="msgs" [sticky]="true"></p-growl>
+
+      </form>
+
+      <p-toolbar>
+        <div class="ui-toolbar-group-left btnpanel">
+
+
+          <button pButton type="button" (click)="showDialog()" label="Nova Funcionalidade" icon="fa-plus"></button>
+          <i class="material-icons" style="vertical-align:middle">apps</i>
+          <p-splitButton icon="ui-icon-format-list-bulleted" label="Acões relacionadas" [model]="acoesRelacionadas" styleClass="ui-button-warning"></p-splitButton>
+        </div>
+
+      </p-toolbar>
+
+      <br/>
+      <div class="ui-g form-group">
+        <div class="ui-g-12 ui-md-12">
+          <div class="ui-inputgroup">
+            <button pButton type="button" icon="ui-icon-search"></button>
+            <span class="md-inputfield">
+              <input #gb type="text" pInputText class="pesquisar" style="border-radius: 6px;">
+              <label>Pesquisar</label>
+            </span>
+          </div>
+        </div>
+        <br/>
+
+        <p-panel>
+
+
+          <p-dataTable [value]="funcionalidades" [paginator]="true" [rows]="5" [responsive]="true" [rowsPerPageOptions]="[3,5,10,15]" [globalFilter]="gb"
+            selectionMode="single"  dataKey="id" #tabela emptyMessage="Nenhum registro encontrado"
+            [lazy]="false" sortMode="multiple">
+
+
+
+
+
+
+
+            <p-footer>
+              <div style="text-align:right">
+                <p-multiSelect [options]="columnOptions" [(ngModel)]="cols"></p-multiSelect>
+              </div>
+            </p-footer>
+
+            <p-column *ngFor="let col of cols" [sortable]="true" [field]="col.field" [header]="col.header" [styleClass]="col.style" [filter]="false">
+
+
+
+            </p-column>
+
+
+            <!--
+    <p-column field="pessoa" header="Pessoa"   [filter]="false" [sortable]="true"></p-column>
+
+
+
+    <p-column field="descricao" header="Descrição" [filter]="false" [sortable]="true"></p-column>
+
+
+
+    <p-column header="Vencimento" styleClass="col-data" [filter]="false" [sortable]="true">
+      <ng-template let-lanc="rowData" pTemplate="body">
+          <span>{{ lanc.dataVencimento | date:'dd/MM/yyyy' }}</span>
+      </ng-template>
+    </p-column>
+
+
+
+    <p-column header="Pagamento" styleClass="col-data" [filter]="false" [sortable]="true">
+      <ng-template let-lanc="rowData" pTemplate="body">
+          <span>{{ lanc.dataPagamento | date:'dd/MM/yyyy' }}</span>
+      </ng-template>
+    </p-column>
+
+
+-->
+            <!--   <p-column field="valor" header="Valor" styleClass="col-valor" [filter]="false" [sortable]="true">
+                            <ng-template let-lanc="rowData" pTemplate="body">
+                                <span [style.color]="lanc.tipo === 'DESPESA' ? 'red' : 'blue'">{{ lanc.valor }}</span>
+                            </ng-template>
+                        </p-column>-->
+
+
+
+            <p-column styleClass="col-opcoes" header="Ações">
+              <ng-template let-lanc="rowData" pTemplate="body">
+                <button pButton icon="ui-icon-edit" pTooltip="Editar" tooltipPosition="top" (click)="showDialog(true)" [routerLink]="['/usuario', lanc.codigo]"></button>
+                <button pButton icon="ui-icon-delete-forever" pButton (click)="confirmarExclusao(lanc)" pTooltip="Excluir" tooltipPosition="top"
+                  class="ui-button-danger"></button>
+              </ng-template>
+            </p-column>
+
+
+            <p-footer>Total: {{ total}} registros</p-footer>
+          </p-dataTable>
+
+        </p-panel>
+
+
+
+
+
+
+        <p-dialog header="Cadastro de Permissões" [(visible)]="display" modal="modal"  [responsive]="true" [width]="800">
+          <!-- <app-lancamento-cadastro></app-lancamento-cadastro>-->
+
+          <form #f="ngForm" autocomplete="off" (ngSubmit)="salvar(f)">
+
+            <div class="ui-g">
+
+
+
+              <div class="ui-g-12 ui-md-9 ui-fluid">
+                <label>Funcionalidade</label>
+                <input pInputText type="text" required minlength="5" name="permissao" [(ngModel)]="dadosFuncionalidade.funcionalidade">
+                <input pInputText type="hidden" required minlength="5" value="{{auth.getUser().id}}" name="id_usuario" [(ngModel)]="dadosFuncionalidade.id_usuario">
+
+
+              </div>
+
+              <div class="ui-g-12 ui-md-6 ui-fluid">
+                <label>Rota</label>
+                <input pInputText type="text" required minlength="5" name="permissao" [(ngModel)]="dadosFuncionalidade.rota">
+
+
+
+              </div>
+              <div class="ui-g-12 ui-md-6 ui-fluid">
+                <label>Icone</label>
+                <input pInputText type="text" required minlength="5" name="permissao" [(ngModel)]="dadosFuncionalidade.icone">
+
+
+
+              </div>
+
+              <div class="ui-g-12">
+                <button pButton type="submit" pButton icon="fa-check" label="Salvar"></button>
+                <button pButton type="button" pButton icon="fa-close" label="Fechar" (click)="showDialogFalse()" class="ui-button-danger"></button>
+
+              </div>
+            </div>
+            <p-messages [(value)]="msgs"></p-messages>
+
+          </form>
+
+
+        </p-dialog>
+
+
+
+      </div>
+    </div>
+  </div>

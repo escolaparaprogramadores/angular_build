@@ -1,0 +1,180 @@
+<div class="ui-g">
+    <div class="ui-g-12" style="margin-top: -15px;">
+
+
+    <div class="card shadow-box ui-shadow-3">
+
+    <form autocomplete="off">
+
+    <p-growl [(value)]="msgs" [sticky]="true"></p-growl>
+
+    </form>
+
+    <p-toolbar>
+    <div class="ui-toolbar-group-left btnpanel ui-g-12 ui-md-12">
+    <button pButton type="button"   (click)=" getUserSistema()"  (click)="showDialogOpen(true, null)" label="Novo modulo" icon="ui-icon-widgets" class="btnNovo" id="id-btnNovo"></button>
+    <i class="material-icons btnIcon" style="vertical-align:middle; color: #4d4948">apps</i>
+    <p-splitButton icon="ui-icon-format-list-bulleted " label="Acões relacionadas" [model]="acoesRelacionadas" styleClass="ui-button-warning  btnAcoes"
+        id="id-btnAcoes"></p-splitButton>
+
+
+    <div class="ui-g-12 ui-md-9" class="pesquisarPermissao" id="id-pesquisar">
+        <div class="ui-inputgroup">
+            <button pButton type="button" icon="ui-icon-search"></button>
+            <span class="md-inputfield">
+                <input #gb type="text" pInputText class="pesquisarInput" (keyup)="listar()">
+                <label>Pesquisar</label>
+            </span>
+        </div>
+    </div>
+    </div>
+
+    <div class="ui-toolbar-group-right btnpanel">
+
+    </div>
+
+    </p-toolbar>
+
+
+
+    <p-panel>
+         <!--DATA TABLE-->
+          <p-dataTable
+          [value]="modulos"
+          [paginator]="true"
+          [rows]="10"
+          [responsive]="true"
+          [rowsPerPageOptions]="[3,5,10,20,30,50]"
+          [globalFilter]="gb"
+          selectionMode="single"
+          [(selection)]="moduloSelecionado"
+          dataKey="id"
+          #table
+          emptyMessage="Nenhum registro encontrado"
+          sortMode="multiple"
+          (onRowSelect)="onRowSelect($event)">
+
+
+
+        <p-column *ngFor="let col of cols" [sortable]="true" [field]="col.field" [header]="col.header"  [styleClass]="col.style" [filter]="false">
+            <ng-template let-modulo="rowData" let-ri="rowIndex"  pTemplate="body">
+
+                <div *ngIf="col.field=='modulo'" >
+                    <span  >{{ modulo.modulo }}</span>
+                </div>
+
+              </ng-template>
+        </p-column>
+
+
+        <p-column styleClass="col-opcoes" header="AÇÕES">
+            <ng-template let-modulo="rowData" pTemplate="body">
+                <button pButton icon="ui-icon-edit" pTooltip="Editar" type="submit" tooltipPosition="top" (click)="showDialogOpen(true,modulo.id)"></button>
+                <button pButton icon="ui-icon-delete-forever" pButton (click)="confirmarExclusao(modulo)" pTooltip="Excluir" tooltipPosition="top"
+                    class="ui-button-danger"></button>
+            </ng-template>
+        </p-column>
+
+        <p-footer class="totalRegistro">Total: {{ table.totalRecords }}  registro(s)</p-footer>
+
+
+        <p-footer>
+          <div style="text-align:right">
+              <p-multiSelect defaultLabel="Escolha" selectedItemsLabel="{0} Itens selecionados" [options]="columnOptions" [(ngModel)]="cols"></p-multiSelect>
+          </div>
+      </p-footer>
+       </p-dataTable>
+       <!--FIM DATATABLE-->
+    </p-panel>
+
+
+    <!-- CAIXA DE DIALOGO -->
+    <p-dialog header="Cadastro Modulo" [(visible)]="display" modal="modal"  [responsive]="true" [width]="670">
+    <form #form="ngForm" autocomplete="off" >
+      <p-tabView  >
+
+    <div class="ui-g" *ngIf="dadosModulo">
+
+        <p-tabPanel header="Modulo" leftIcon="ui-icon-widgets">
+            <div class="ui-g-12">
+              <div class="ui-g form-group">
+
+
+              <div class="ui-g-12 ui-md-12 ui-lg-12" style="width: 100%;" >
+                  <div class="ui-inputgroup">
+                      <span class="ui-inputgroup-addon"><i class="material-icons">widgets</i></span>
+                      <span class="md-inputfield md-inputfield-fill">
+                          <input required minlength="3" autocomplete="off" id="modulo" type="text" pInputText style="width: 100%; " #modulo="ngModel"   name="modulo"  [(ngModel)]="dadosModulo.modulo" >
+                          <label for="modulo">Criar modulo:</label>
+
+                          <div class="ui-message ui-messages-error positionMenssageErrormodulo" *ngIf="modulo.errors && (modulo.dirty || modulo.touched)">
+                                *Mínimo de 3 caracteres.
+                          </div>
+
+                      </span>
+                  </div>
+              </div>
+
+
+            </div>
+          </div>
+
+          <p-fieldset legend="Outras Informações" toggleable="true" collapsed = "true">
+
+            <div class="ui-g-12 ui-md-12 ui-lg-6"  >
+                <div class="ui-inputgroup">
+                    <span class="ui-inputgroup-addon"><i class="material-icons">account_circle</i></span>
+                    <span class="md-inputfield md-inputfield-fill">
+                        <input disabled id="name_user" type="text" pInputText style="width: 100%; " name="name_user" [(ngModel)]="dadosModulo.name_user">
+                        <label for="name_user">Criado por:</label>
+                    </span>
+                </div>
+            </div>
+
+
+              <div class="ui-g-12 ui-md-12 ui-lg-3">
+                  <div class="ui-inputgroup">
+                      <span class="ui-inputgroup-addon"><i class="material-icons">event</i></span>
+                      <span class="md-inputfield md-inputfield-fill l">
+                          <p-calendar [disabled]="true" [showTime]="true" id="created_at" [(ngModel)]="dadosModulo.created_at" name="created_at" dateFormat="dd/mm/yy"
+                            [inline]="false" [locale]="pt" [readonlyInput]="true" [showIcon]="false" >
+                            </p-calendar>
+                          <label class="l" for="created_at">Data criação:</label>
+                      </span>
+                  </div>
+              </div>
+
+
+
+              <div class="ui-g-12 ui-md-12 ui-lg-3">
+                  <div class="ui-inputgroup">
+                      <span class="ui-inputgroup-addon"><i class="material-icons">event</i></span>
+                      <span class="md-inputfield md-inputfield-fill l">
+                          <p-calendar [disabled]="true" [showTime]="true" id="updated_at" [(ngModel)]="dadosModulo.updated_at" name="updated_at" dateFormat="dd/mm/yy"
+                            [inline]="false" [locale]="pt" [readonlyInput]="true" [showIcon]="false" >
+                            </p-calendar>
+                          <label class="l" for="updated_at">Data atualização:</label>
+                      </span>
+                  </div>
+              </div>
+          </p-fieldset>
+
+        </p-tabPanel>
+
+        <br/>
+
+      <!--BOTÕES-->
+        <div class="ui-g-12" style="text-align: left">
+            <button class="btnSalvar" pButton type="submit"  icon="fa-check" label="Salvar" (click)="salvar(form)" [disabled]="form.invalid  " ></button>
+            <button pButton type="text"  icon="fa-close" label="Fechar"    (click)="showDialogClose(false, form)" class="btnFechar"></button>
+        </div>
+     <!-- FIM BOTÕES-->
+    </div>
+        <p-messages [(value)]="msgsTelaCadastro"></p-messages>
+    </p-tabView>
+    </form>
+    </p-dialog>
+    <!-- FIM CAIXA DE DIALOGO -->
+    </div>
+    </div>
+    </div>

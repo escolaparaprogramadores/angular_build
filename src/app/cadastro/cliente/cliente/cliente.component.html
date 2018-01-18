@@ -1,0 +1,482 @@
+<div class="ui-g">
+  <div class="ui-g-12" style="margin-top: -15px;">
+
+  <div class="card shadow-box ui-shadow-3">
+
+  <form autocomplete="off">
+
+  <p-growl [(value)]="msgs" [sticky]="true"></p-growl>
+
+  </form>
+
+  <p-toolbar>
+  <div class="ui-toolbar-group-left btnpanel ui-g-12 ui-md-12">
+  <button pButton type="button"   (click)=" getUserSistema()"  (click)="showDialogOpen(true,null)" label="Novo cliente" icon="ui-icon-domain" class="btnNovo" id="id-btnNovo"></button>
+  <i class="material-icons btnIcon" style="vertical-align:middle; color: #4d4948">apps</i>
+  <p-splitButton icon="ui-icon-format-list-bulleted " label="Acões relacionadas" [model]="acoesRelacionadas" styleClass="ui-button-warning  btnAcoes"
+      id="id-btnAcoes"></p-splitButton>
+
+
+  <div class="ui-g-12 ui-md-9" class="pesquisar" id="id-pesquisar">
+      <div class="ui-inputgroup">
+          <button pButton type="button" icon="ui-icon-search"></button>
+          <span class="md-inputfield">
+              <input #gb type="text" pInputText class="pesquisarInput" (keyup)="listar()">
+              <label>Pesquisar</label>
+          </span>
+      </div>
+  </div>
+  </div>
+
+  <div class="ui-toolbar-group-right btnpanel">
+
+  </div>
+
+  </p-toolbar>
+
+
+
+  <p-panel>
+       <!--DATA TABLE-->
+        <p-dataTable
+        [value]="clientes"
+        [paginator]="true"
+        [rows]="10"
+        [responsive]="true"
+        [rowsPerPageOptions]="[3,5,10,20,30,50]"
+        [globalFilter]="gb"
+        selectionMode="single"
+        [(selection)]="clienteSelecionado"
+        dataKey="id"
+        #table
+        emptyMessage="Nenhum registro encontrado"
+        sortMode="multiple"
+        (onRowSelect)="onRowSelect($event)">
+
+
+      <p-column *ngFor="let col of cols" [sortable]="true" [field]="col.field" [header]="col.header"  [styleClass]="col.style" [filter]="false">
+          <ng-template let-cliente="rowData" pTemplate="body">
+
+
+            <div *ngIf="col.field=='nome'">
+              <span>{{ cliente.nome }}</span>
+            </div>
+
+            <div *ngIf="col.field=='tipo_cliente'">
+              <span  >{{ cliente.tipo_cliente }}</span>
+            </div>
+
+            <div *ngIf="col.field=='name_user'">
+              <span  >{{ cliente.name_user}}</span>
+            </div>
+
+            <div *ngIf="col.field=='cnpj'" >
+                <span  *ngIf="col.field=='cnpj'">{{cliente.cnpj }}</span>
+                <span  *ngIf="col.field=='cnpj'"> {{cliente.cpf }}</span>
+            </div>
+
+            <div *ngIf="col.field=='cpf'" >
+              <span  *ngIf="col.field=='cpf'"> {{cliente.cpf }}</span>
+            </div>
+
+            <div *ngIf="col.field=='telefone'">
+                <span >{{ cliente.telefone === null ? cliente.celular : cliente.telefone}}</span>
+            </div>
+
+            <div *ngIf="col.field=='localidade'">
+              <span>{{ cliente.localidade }} - {{ cliente.uf }}</span>
+            </div>
+
+            <div *ngIf="col.field=='status'">
+                    <span [style.color]="cliente.status === 1 ? 'green' : 'red'" style="col-status-cliente2" >{{ cliente.status === 1 ? 'Ativo' : 'Inativo'}}</span>
+            </div>
+
+
+
+          </ng-template>
+      </p-column>
+
+      <p-column styleClass="col-opcoes" header="AÇÕES">
+          <ng-template let-cliente="rowData" pTemplate="body">
+              <button pButton icon="ui-icon-edit" pTooltip="Editar" type="submit" tooltipPosition="top" (click)="showDialogOpen(true,cliente.id)"></button>
+              <button pButton icon="ui-icon-delete-forever" pButton (click)="confirmarExclusao(cliente)" pTooltip="Excluir" tooltipPosition="top"
+                  class="ui-button-danger"></button>
+          </ng-template>
+      </p-column>
+
+      <p-footer class="totalRegistro">Total: {{ table.totalRecords }}  registro(s)</p-footer>
+
+      <p-footer>
+        <div style="text-align:right">
+            <p-multiSelect defaultLabel="Escolha" selectedItemsLabel="{0} Itens selecionados" [options]="columnOptions" [(ngModel)]="cols"></p-multiSelect>
+        </div>
+    </p-footer>
+     </p-dataTable>
+     <!--FIM DATATABLE-->
+  </p-panel>
+
+
+<!-- CAIXA DE DIALOGO -->
+<p-dialog header="Cadastro Cliente" (onHide)="showDialogClose(false, form)" [(visible)]="display" modal="modal"  [responsive]="true" [width]="900" [positionTop]="80" >
+<form #form="ngForm" autocomplete="off" >
+<p-tabView  >
+
+<div class="ui-g" *ngIf="dadosCliente">
+
+<p-tabPanel header="Cliente" leftIcon="ui-icon-domain">
+<div class="ui-g-12">
+    <div class="ui-g form-group">
+
+
+
+
+
+
+
+
+    <div class="ui-g-12 ui-md-12 ui-lg-12 tipoEmpresa" >
+        <div class="ui-g-12">
+            <p-radioButton *ngIf="mostraOpcaoTipoEmpresaPJ" name="group1" value="PJ" label="Empresa" [(ngModel)]="dadosCliente.tipo_cliente" inputId="opt1"></p-radioButton>
+            <p-radioButton *ngIf="mostraOpcaoTipoEmpresaPF" name="group1" value="PF" label="Pessoa física" [(ngModel)]="dadosCliente.tipo_cliente" inputId="opt2"></p-radioButton>
+        </div>
+    </div>
+
+
+    <div class="ui-g-12 ui-md-12 ui-lg-12 statusEmpresa " >
+        <div class="ui-inputgroup">
+            <label class="labelFormulario">{{ dadosCliente.status == true ? 'Ativo' : 'Inativo'}}</label>
+            <p-inputSwitch  [(ngModel)]="dadosCliente.status" [ngModelOptions]="{standalone: 1}"></p-inputSwitch>
+        </div>
+    </div>
+
+    <div class="ui-g-12 ui-md-12 ui-lg-6">
+        <div class="ui-inputgroup">
+            <span class="ui-inputgroup-addon"><i class="material-icons">domain</i></span>
+            <span class="md-inputfield md-inputfield-fill">
+                <input autocomplete="off" id="nome" type="text" pInputText style="width: 100%; " #nome="ngModel"  required  name="nome"  [(ngModel)]="dadosCliente.nome" >
+                <label for="nome">Nome do cliente:</label>
+                <div class="ui-message ui-messages-error positionMenssageErrorClienteDados" *ngIf="nome.errors && (nome.dirty || nome.touched)">
+                        *O Nome é obrigatório.
+                </div>
+            </span>
+        </div>
+    </div>
+
+    <div class="ui-g-12 ui-md-12 ui-lg-6" *ngIf="dadosCliente.tipo_cliente === 'PJ'">
+            <div class="ui-inputgroup">
+                <span class="ui-inputgroup-addon"><i class="material-icons">featured_play_list</i></span>
+                <span class="md-inputfield md-inputfield-fill">
+                    <input required  autocomplete="off" id="apelido" type="text" pInputText style="width: 100%; " #apelido="ngModel"  name="apelido"  [(ngModel)]="dadosCliente.apelido" >
+                    <label for="apelido">Razão social:</label>
+                    <div class="ui-message ui-messages-error positionMenssageErrorClienteDados" *ngIf="apelido.errors && (apelido.dirty || apelido.touched)">
+                        *Razão Social é obrigatório.
+                    </div>
+                </span>
+            </div>
+     </div>
+
+     <div class="ui-g-12 ui-md-12 ui-lg-6 " *ngIf="dadosCliente.tipo_cliente === 'PJ'" >
+            <div class="ui-inputgroup ">
+                <span class="ui-inputgroup-addon "><i class="material-icons">subtitles</i></span>
+                <span class="md-inputfield md-inputfield-fill ">
+                    <p-inputMask required   #cnpj="ngModel" styleClass="inputCnpjEmpresa" id="cnpj" name="cnpj"  [(ngModel)]="dadosCliente.cnpj" mask="99.999.999/9999-99" placeholder="ex: 99.999.999/9999-99" slotChar=" " [ngModelOptions]="{standalone: true}"></p-inputMask>
+                    <label for="cnpj">CNPJ:</label>
+                    <div class="ui-message ui-messages-error positionMenssageErrorClienteDados" *ngIf="cnpj.errors && (cnpj.dirty || cnpj.touched)">
+                            *Cnpj inválido.
+                    </div>
+                </span>
+            </div>
+     </div>
+
+
+     <div class="ui-g-12 ui-md-12 ui-lg-6 " *ngIf="dadosCliente.tipo_cliente === 'PF'">
+            <div class="ui-inputgroup ">
+                <span class="ui-inputgroup-addon "><i class="material-icons">subtitles</i></span>
+                <span class="md-inputfield md-inputfield-fill ">
+                    <p-inputMask required  #cpf="ngModel" styleClass="inputCnpjEmpresa" id="cpf" name="cpf"  [(ngModel)]="dadosCliente.cpf" mask="999.999.999-99" placeholder="ex: 99.999.999-99" slotChar=" " [ngModelOptions]="{standalone: true}"></p-inputMask>
+                    <label for="cpf">CPF:</label>
+                    <div class="ui-message ui-messages-error positionMenssageErrorClienteDados" *ngIf="cpf.errors && (cpf.dirty || cpf.touched)">
+                            *CPF inválido.
+                    </div>
+                </span>
+            </div>
+     </div>
+
+     <div class="ui-g-12 ui-md-12 ui-lg-6 " *ngIf="dadosCliente.tipo_cliente === 'PF'">
+        <div class="ui-inputgroup ">
+            <span class="ui-inputgroup-addon "><i class="material-icons">folder_shared</i></span>
+            <span class="md-inputfield md-inputfield-fill ">
+                <input required autocomplete="off" id="rg" type="text" pInputText style="width: 100%; " #rg="ngModel"  name="rg"  [(ngModel)]="dadosCliente.rg" >
+                <label for="rg">RG:</label>
+                <div class="ui-message ui-messages-error positionMenssageErrorClienteDados" *ngIf="rg.errors && (rg.dirty ||rg.touched)">
+                        *RG inválido.
+                </div>
+            </span>
+        </div>
+      </div>
+
+      <div class="ui-g-12 ui-md-12 ui-lg-3 " *ngIf="dadosCliente.tipo_cliente === 'PJ'">
+        <div class="ui-inputgroup ">
+            <span class="ui-inputgroup-addon "><i class="material-icons">domain</i></span>
+            <span class="md-inputfield md-inputfield-fill ">
+                <input  autocomplete="off" id="inscricao_estadual" type="text" pInputText style="width: 100%; " #inscricao_estadual="ngModel"  name="inscricao_estadual"  [(ngModel)]="dadosCliente.inscricao_estadual" >
+                <label for="inscricao_estadual">Inscrição estadual:</label>
+                <div class="ui-message ui-messages-error positionMenssageErrorClienteDados" *ngIf="inscricao_estadual.errors && (inscricao_estadual.dirty ||inscricao_estadual.touched)">
+                        *Inscrição estadual é obrigatório.
+                </div>
+            </span>
+        </div>
+      </div>
+
+      <div class="ui-g-12 ui-md-12 ui-lg-3 " *ngIf="dadosCliente.tipo_cliente === 'PJ'">
+        <div class="ui-inputgroup ">
+            <span class="ui-inputgroup-addon "><i class="material-icons">domain</i></span>
+            <span class="md-inputfield md-inputfield-fill ">
+                <input  autocomplete="off" id="inscricao_municipal" type="text" pInputText style="width: 100%; " #inscricao_municipal="ngModel"  name="inscricao_municipal"  [(ngModel)]="dadosCliente.inscricao_municipal" >
+                <label for="inscricao_municipal">Inscrição municipal:</label>
+                <div class="ui-message ui-messages-error positionMenssageErrorClienteDados" *ngIf="inscricao_municipal.errors && (inscricao_municipal.dirty ||inscricao_municipal.touched)">
+                        *Inscrição municipal é obrigatório.
+                </div>
+            </span>
+        </div>
+      </div>
+
+      <div class="ui-g-12 ui-md-12 ui-lg-6 " >
+            <div class="ui-inputgroup ">
+                <span class="ui-inputgroup-addon "><i class="material-icons">email</i></span>
+                <span class="md-inputfield md-inputfield-fill ">
+                    <input email required autocomplete="off" id="email" type="text" pInputText style="width: 100%; " #email="ngModel"  name="email"  [(ngModel)]="dadosCliente.email" >
+                    <label for="email">Email:</label>
+                    <div class="ui-message ui-messages-error positionMenssageErrorClienteDados" *ngIf="email.errors && (email.dirty ||email.touched)">
+                            *Email inválido.
+                    </div>
+                </span>
+            </div>
+        </div>
+
+        <div class="ui-g-12 ui-md-12 ui-lg-6 " *ngIf="dadosCliente.tipo_cliente === 'PJ'">
+            <div class="ui-inputgroup ">
+                <span class="ui-inputgroup-addon "><i class="material-icons">cloud</i></span>
+                <span class="md-inputfield md-inputfield-fill ">
+                    <input  autocomplete="off" id="site" type="text" pInputText style="width: 100%; " #site="ngModel"  name="site"  [(ngModel)]="dadosCliente.site" >
+                    <label for="site">Site:</label>
+                    <div class="ui-message ui-messages-error positionMenssageErrorClienteDados" *ngIf="site.errors && (site.dirty ||site.touched)">
+                            *Site é obrigatório.
+                    </div>
+                </span>
+            </div>
+          </div>
+
+
+
+
+      <div class="ui-g-12 ui-md-12 ui-lg-6 " *ngIf="dadosCliente.tipo_cliente === 'PJ'">
+        <div class="ui-inputgroup ">
+            <span class="ui-inputgroup-addon "><i class="material-icons">call</i></span>
+            <span class="md-inputfield md-inputfield-fill ">
+                <p-inputMask  [ngModelOptions]="{standalone: true}" mask="(99)9999-9999" placeholder="ex: (99) 9999-9999" styleClass="inputTelefone" slotChar=" " required autocomplete="off" id="telefone"  #telefone="ngModel"  name="telefone"  [(ngModel)]="dadosCliente.telefone" ></p-inputMask>
+                <label for="telefone">Telefone:</label>
+                <div class="ui-message ui-messages-error positionMenssageErrorClienteDados" *ngIf="telefone.errors && (telefone.dirty ||telefone.touched)">
+                    *Telefone é obrigatório.
+                </div>
+            </span>
+        </div>
+    </div>
+
+    <div class="ui-g-12 ui-md-12 ui-lg-6 " *ngIf="dadosCliente.tipo_cliente === 'PF'">
+      <div class="ui-inputgroup ">
+          <span class="ui-inputgroup-addon "><i class="material-icons">call</i></span>
+          <span class="md-inputfield md-inputfield-fill ">
+              <p-inputMask  [ngModelOptions]="{standalone: true}" mask="(99)9999-9999" placeholder="ex: (99) 9999-9999" styleClass="inputTelefone" slotChar=" "  autocomplete="off" id="telefone"  #telefone="ngModel"  name="telefone"  [(ngModel)]="dadosCliente.telefone" ></p-inputMask>
+              <label for="telefone">Telefone:</label>
+              <div class="ui-message ui-messages-error positionMenssageErrorClienteDados" *ngIf="telefone.errors && (telefone.dirty ||telefone.touched)">
+                  *Telefone é obrigatório.
+              </div>
+          </span>
+      </div>
+  </div>
+
+    <div class="ui-g-12 ui-md-12 ui-lg-6 " >
+        <div class="ui-inputgroup ">
+            <span class="ui-inputgroup-addon "><i class="material-icons">settings_cell</i></span>
+            <span class="md-inputfield md-inputfield-fill ">
+                <p-inputMask  [ngModelOptions]="{standalone: true}"  mask="(99)9.9999-9999" placeholder="ex: (99) 9.9999-9999" styleClass="inputCelular" slotChar=" " autocomplete="off" id="celular" type="text"  #celular="ngModel"  name="celular"  [(ngModel)]="dadosCliente.celular" ></p-inputMask>
+                <label for="celular">Celular:</label>
+                <div class="ui-message ui-messages-error positionMenssageErrorClienteDados" *ngIf="celular.errors && (celular.dirty ||celular.touched)">
+                    *Celular é obrigatório.
+                </div>
+            </span>
+        </div>
+    </div>
+
+
+      <div class="ui-g-12 ui-md-12 ui-lg-3 ">
+            <div class="ui-inputgroup ">
+                <span class="ui-inputgroup-addon "><i class="material-icons">public</i></span>
+                <span class="md-inputfield md-inputfield-fill ">
+                    <p-inputMask unmask="true" mask="99.999-999" placeholder="ex: 99.999-999" slotChar=" " (onBlur)=" buscarPorCEP()"    #cep="ngModel"  styleClass="inputCnpjEmpresa" id="cep" name="cep"  [(ngModel)]="dadosCliente.cep" ></p-inputMask>
+                 <label for="cep">Buscar endereço por CEP:</label>               
+                </span>
+            </div>
+      </div>
+
+
+      <div class="ui-g-12 ui-md-12 ui-lg-7 " >
+            <div class="ui-inputgroup ">
+                <span class="ui-inputgroup-addon "><i class="material-icons">confirmation_number </i></span>
+                <span class="md-inputfield md-inputfield-fill ">
+                    <input  autocomplete="off" id="logradouro" type="text" pInputText style="width: 100%; " #logradouro="ngModel"  name="logradouro"  [(ngModel)]="dadosCliente.logradouro" >
+                    <label for="logradouro">Endereço:</label>
+                    <div class="ui-message ui-messages-error positionMenssageErrorCliente" *ngIf="logradouro.errors && (logradouro.dirty ||logradouro.touched)">
+                            *A 'Rua' é obrigatório.
+                    </div>
+                </span>
+            </div>
+        </div>
+
+        <div class="ui-g-12 ui-md-12 ui-lg-2 " >
+          <div class="ui-inputgroup ">
+            <span class="ui-inputgroup-addon "><i class="material-icons">assistant_photo </i></span>
+              <span class="md-inputfield md-inputfield-fill ">
+                  <input required minlength="1"  autocomplete="off" id="numero" type="text" pInputText style="width: 100%; " #numero="ngModel"  name="numero"   placeholder="Número" [(ngModel)]="dadosCliente.numero" >
+                  <label for="cep">Número:</label>
+                  <div class="ui-message ui-messages-error positionMenssageErrorClienteNumero" *ngIf="numero.errors && (numero.dirty ||numero.touched)">
+                          *O 'Número' é obrigatório.
+                  </div>
+              </span>
+          </div>
+      </div>
+
+
+        <div class="ui-g-12 ui-md-12 ui-lg-5 " >
+                <div class="ui-inputgroup ">
+                    <span class="ui-inputgroup-addon "><i class="material-icons">location_on</i></span>
+                    <span class="md-inputfield md-inputfield-fill ">
+                        <input  autocomplete="off" id="bairro" type="text" pInputText style="width: 100%; " #bairro="ngModel"  name="bairro"  [(ngModel)]="dadosCliente.bairro" >
+                        <label for="bairro">Bairro:</label>
+                        <div class="ui-message ui-messages-error positionMenssageErrorCliente" *ngIf="bairro.errors && (bairro.dirty ||bairro.touched)">
+                                *O 'Bairro' é obrigatório.
+                        </div>
+                    </span>
+                </div>
+            </div>
+
+
+             <div class="ui-g-12 ui-md-12 ui-lg-5 " >
+                <div class="ui-inputgroup ">
+                    <span class="ui-inputgroup-addon "><i class="material-icons"> map</i></span>
+                    <span class="md-inputfield md-inputfield-fill ">
+                        <input  autocomplete="off" id="localidade" type="text" pInputText style="width: 100%; " #localidade="ngModel"  name="localidade"  [(ngModel)]="dadosCliente.localidade" >
+                        <label for="localidade">Cidade:</label>
+                        <div class="ui-message ui-messages-error positionMenssageErrorCliente" *ngIf="localidade.errors && (localidade.dirty ||localidade.touched)">
+                                *O 'Cidade' é obrigatório.
+                        </div>
+                    </span>
+                </div>
+            </div>
+
+
+
+          <div class="ui-g-12 ui-md-12 ui-lg-2 " >
+            <div class="ui-inputgroup ">
+                <span class="ui-inputgroup-addon "><i class="material-icons">domain</i></span>
+                <span class="md-inputfield md-inputfield-fill ">
+                    <input  autocomplete="off" id="uf" type="text" pInputText style="width: 100%; " #uf="ngModel"  name="uf"  [(ngModel)]="dadosCliente.uf" >
+                    <label for="uf">Estado:</label>
+                    <div class="ui-message ui-messages-error positionMenssageErrorCliente" *ngIf="uf.errors && (uf.dirty ||uf.touched)">
+                            *O 'Estado' é obrigatório.
+                    </div>
+                </span>
+            </div>
+        </div>
+
+
+
+        <div class="ui-g-12 ui-md-12 ui-lg-12 " >
+          <div class="ui-inputgroup ">
+              <span class="ui-inputgroup-addon "><i class="material-icons">toc</i></span>
+              <span class="md-inputfield md-inputfield-fill ">
+                  <input  autocomplete="off" id="complemento" type="text" pInputText style="width: 100%; " #complemento="ngModel"  name="complemento"  [(ngModel)]="dadosCliente.complemento" >
+                  <label for="complemento">Complemento:</label>
+                  <div class="ui-message ui-messages-error positionMenssageErrorCliente" *ngIf="complemento.errors && (complemento.dirty ||complemento.touched)">
+                          *O 'Complemento' é obrigatório.
+                  </div>
+              </span>
+          </div>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+            </div>
+        </div>
+
+        <p-fieldset legend="Outras Informações" toggleable="true" collapsed = "true">
+
+          <div class="ui-g-12 ui-md-12 ui-lg-6"  >
+              <div class="ui-inputgroup">
+                  <span class="ui-inputgroup-addon"><i class="material-icons">account_circle</i></span>
+                  <span class="md-inputfield md-inputfield-fill">
+                      <input disabled id="name_user" type="text" pInputText style="width: 100%; " name="name_user" [(ngModel)]="dadosCliente.name_user">
+                      <label for="nameuser">Criado por:</label>
+                  </span>
+              </div>
+          </div>
+
+
+            <div class="ui-g-12 ui-md-12 ui-lg-3">
+                <div class="ui-inputgroup">
+                    <span class="ui-inputgroup-addon"><i class="material-icons">event</i></span>
+                    <span class="md-inputfield md-inputfield-fill l">
+                        <p-calendar [disabled]="true" [showTime]="true" id="created_at" [(ngModel)]="dadosCliente.created_at" name="created_at" dateFormat="dd/mm/yy"
+                          [inline]="false" [locale]="pt" [readonlyInput]="true" [showIcon]="false" >
+                          </p-calendar>
+                        <label class="l" for="created_at">Data criação:</label>
+                    </span>
+                </div>
+            </div>
+
+
+
+            <div class="ui-g-12 ui-md-12 ui-lg-3">
+                <div class="ui-inputgroup">
+                    <span class="ui-inputgroup-addon"><i class="material-icons">event</i></span>
+                    <span class="md-inputfield md-inputfield-fill l">
+                        <p-calendar [disabled]="true" [showTime]="true" id="updated_at" [(ngModel)]="dadosCliente.updated_at" name="updated_at" dateFormat="dd/mm/yy"
+                          [inline]="false" [locale]="pt" [readonlyInput]="true" [showIcon]="false" >
+                          </p-calendar>
+                        <label class="l" for="updated_at">Data atualização:</label>
+                    </span>
+                </div>
+            </div>
+        </p-fieldset>
+
+      </p-tabPanel>
+
+
+
+
+      <br/>
+
+    <!--BOTÕES-->
+      <div class="ui-g-12" style="text-align: left">
+          <button class="btnSalvar" pButton type="submit"  icon="fa-check" label="Salvar" (click)="salvar(form)"   [disabled]="form.invalid "></button>
+          <button pButton type="text"  icon="fa-close" label="Fechar"    (click)="showDialogClose(false, form)" class="btnFechar"></button>
+      </div>
+
+  </div>
+      <p-messages [(value)]="msgsTelaCadastro"></p-messages>
+  </p-tabView>
+  </form>
+  </p-dialog>
+  <!-- FIM CAIXA DE DIALOGO -->
+  </div>
+  </div>
+  </div>

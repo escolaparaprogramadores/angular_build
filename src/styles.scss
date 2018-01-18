@@ -1,0 +1,452 @@
+/* You can add global styles to this file, and also import other style files */
+/* You can add global styles to this file, and also import other style files */
+.col-valor{
+  width: 100%;
+  text-align: center;
+}
+
+.col-modulo{
+  width: 100%;
+  text-align: left;
+}
+
+.col-permissao{
+  width: 100%;
+  text-align: left;
+}
+
+.col-data{
+  width: 100%;
+  text-align: center;
+}
+
+
+.col-status{
+  width: 100%;
+  text-align: center;
+}
+
+.col-cpf{
+  display: none;
+}
+
+
+.col-pagamento{
+  width: 100%;
+  text-align: center;
+}
+
+.col-email{
+  width: 200%;
+  text-align: left;
+
+}
+
+.col-nome{
+  width: 150%;
+  text-align: left;
+}
+
+
+.col-opcoes{
+  width: 120px;
+  text-align: center;
+}
+
+
+.col-cidade{
+  width: 100%;
+  text-align: center;
+}
+
+.col-estado{
+  width: 100%;
+  text-align: center;
+}
+
+.col-nome-cliente{
+  width: 170%;
+  text-align: center;
+}
+
+.col-tipo-cliente{
+  width: 100%;
+  text-align: center;
+}
+
+.col-cnpj-cliente{
+  width: 130%;
+  text-align: center;
+}
+
+.col-cidade-uf-cliente{
+  width: 100%;
+  text-align: center;
+}
+
+.col-telefone-cliente{
+  width: 100%;
+  text-align: center;
+}
+
+.col-status-cliente{
+  width: 100%;
+  text-align: center;
+}
+
+.col-comercial-cliente{
+  width: 170%;
+  text-align: center;
+}
+
+
+
+body .ui-datatable .ui-datatable-data tr.ui-state-highlight {
+  background-color: #969593 !important;
+  border-color:   #969593  !important;
+  color: #ffffff;
+}
+
+.avatar{
+  border-radius: 50px;
+}
+
+.pesquisar {
+  margin-top: -35px !important;
+  margin-left: 375px !important;
+}
+
+.pesquisarPermissao {
+  margin-top: -35px !important;
+  margin-left: 391px !important;
+}
+.pesquisarInput{
+  border-radius: 4px !important;
+  color: #1f1a17;
+  font-weight: bold;
+}
+
+
+@media (max-width: 677px) {
+  .pesquisar#id-pesquisar{
+    margin-top: 15px !important;
+    margin-left: 0px !important;
+
+
+  }
+  .pesquisarInput{
+    width: 100%;
+  }
+
+
+.btnNovo{
+  width: 40%;
+
+}
+
+.btnAcoes{
+  width: 58% !important;
+
+}
+
+
+.btnIcon{
+  display: none;
+}
+
+
+
+}
+body .md-inputfield input:focus ~ label, body .md-inputfield input.ui-state-filled ~ label, body .md-inputfield .ui-inputwrapper-focus ~ label, body .md-inputfield .ui-inputwrapper-filled ~ label {
+  top: -15px;
+  font-size: 12px;
+  color: #4d4948;
+}
+@media (max-width: 414px) {
+
+button.ng-tns-c5-7.ui-button.ui-widget.ui-state-default.ui-corner-left.ui-button-text-icon-left{
+  width: 79%;
+  }
+
+  body .md-inputfield input:focus ~ label, body .md-inputfield input.ui-state-filled ~ label, body .md-inputfield .ui-inputwrapper-focus ~ label, body .md-inputfield .ui-inputwrapper-filled ~ label {
+    top: -1px;
+    font-size: 12px;
+    color: #4d4948;
+  }
+}
+
+
+@media (min-width: 678px) {
+.totalRegistro{
+position: relative;
+margin-top: -50px;
+top: 12px;
+float: left;
+}
+
+div.ui-multiselect.ui-widget.ui-state-default.ui-corner-all{
+  position: relative;
+  top: -39px;
+}
+
+div.ui-datatable-footer.ui-widget-header{
+  height: 0px;
+}
+}
+
+span.ui-column-title{
+  font-weight: bold;
+}
+
+//Campos de input telas de formulários
+body .md-inputfield.md-inputfield-fill input:focus ~ label, body .md-inputfield.md-inputfield-fill input.ui-state-filled ~ label, body .md-inputfield.md-inputfield-fill .ui-inputwrapper-focus ~ label, body .md-inputfield.md-inputfield-fill .ui-inputwrapper-filled ~ label {
+  top: -14px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #525151;
+  margin-left: -30px;
+}
+
+
+
+body .md-inputfield.md-inputfield-fill label{
+  top: -14px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #525151;
+  margin-left: -30px;
+}
+
+
+
+
+.labelFormulario {
+  font-weight: bold;
+  color: #525151;
+  margin-top: -2px;
+  padding-right: 5px;
+}
+
+.drop {
+  width: 100%;
+  background-color: #f7f7f7;
+  height: 23px;
+}
+
+
+div.ui-g.form-group{
+  margin-left: -30px;
+  margin-right: -30px;
+}
+
+body .ui-tabview {
+  padding: 0;
+  border: none;
+}
+
+body .ui-dialog.ui-shadow {
+  border: none;
+}
+
+body .ui-fieldset {
+  padding: 0.625em 1em;
+  margin-left: -28px;
+  margin-right: -8px;
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
+}
+
+.ui-calendar {
+  position: relative;
+  display: inline-block;
+  margin-top: 3px;
+}
+
+body .ui-fieldset .ui-fieldset-legend {
+  padding: 0.625em 1em;
+  padding-left: .125em;
+  padding-right: .5em;
+  color: #3F51B5;
+  margin-left: -15px;
+}
+
+
+.status {
+  position: relative;
+  margin-left: 680px;
+  top: -60px;
+  margin-bottom: -79px;
+}
+
+
+body .ui-dropdown {
+  margin-top: 4px;
+}
+.positionMenssageErrorClienteNumero{
+  position: relative !important;
+  top: 22px !important;
+  margin-left: -130px !important;
+
+}
+.positionMenssageErrorPermissao {
+  position: relative !important;
+  top: 22px !important;
+  margin-left: -598px !important;
+}
+.positionMenssageErrorClienteDados {
+  position: relative !important;
+  top: 22px !important;
+  margin-left: -399px !important;
+}
+.positionMenssageErrorCliente{
+  position: relative  !important;
+  top: 22px  !important;
+  margin-left: -181px  !important;
+}
+.positionMenssageError{
+  position: relative  !important;
+  top: 22px  !important;
+  margin-left: -350px  !important;
+}
+
+.ui-button.ui-button-warning.ui-state-default, .ui-splitbutton.ui-button-warning .ui-button.ui-state-default {
+   background-color: #79797d;
+   border-color: #79797d;
+  color: #fff;
+}
+
+.btnSalvar {
+  background-color: #159587 !important;
+  border-color: #159587 !important;
+ color: #fff;
+}
+
+.btnFechar {
+  background-color: #d02e2d !important;
+  border-color: #d02e2d !important;
+ color: #fff;
+}
+
+.tipoEmpresa{
+  position: relative !important;
+  margin-top: -20px !important;
+  margin-left: -7px !important;
+}
+
+.statusEmpresa{
+  margin-top: -101px;
+  margin-left: 762px;
+}
+
+.inputCelular{
+  width: 100%;
+}
+#celular{
+  width: 100%;
+  margin-top: 4px;
+}
+.inputTelefone{
+  width: 100%;
+}
+#telefone{
+  width: 100%;
+  margin-top: 4px;
+}
+.inputCnpjEmpresa{
+  width: 100%;
+}
+#cnpj{
+  width: 100%;
+  margin-top: 4px;
+}
+
+#cpf{
+  width: 100%;
+  margin-top: 4px;
+}
+
+#cep{
+  width: 100%;
+  margin-top: 4px;
+}
+
+//Botão quando mouse houver
+body .ui-button:enabled:not(:focus):hover, body .ui-datepicker-buttonpane > button:enabled:not(:focus):hover {
+  background-color: #4d4948; }
+
+
+//Botão quando clicado
+body .ui-button:focus, body .ui-datepicker-buttonpane > button:focus {
+  outline: 0 none;
+  background-color: #79797d; }
+
+
+//Título DataTable
+  body .ui-datatable .ui-datatable-thead > tr th.ui-state-active, body .ui-datatable .ui-datatable-thead > tr th.ui-state-highlight {
+    background-color: #4d4948;
+    color: #ffffff;
+    border-top-color: #4d4948;
+}
+
+//Acões relacionadas quando mouse houver
+body .ui-buttonset .ui-button:not(.ui-state-disabled):not(.ui-state-active):hover {
+  background-color: #4d4948; }
+
+
+body .ui-tabview .ui-tabview-nav > li.ui-state-active a {
+    color:  #4d4948;
+    font-weight: bold;
+}
+
+body .ui-dropdown-panel .ui-dropdown-item.ui-state-highlight {
+  background-color: #79797d;
+  color: #ffffff;
+}
+
+body .ui-state-active, body .ui-state-highlight {
+  background-color: #79797d;
+  color: #ffffff;
+}
+
+body .ui-inputtext:focus, body .ui-inputtext.ui-state-focus {
+  border-width: 0 0 2px 0;
+  border-color: #79797d;
+  padding-bottom: 0px;
+}
+
+
+body .ui-chkbox .ui-chkbox-box.ui-state-active {
+  border-color: #908d8d;
+  background-color: #908d8d;
+}
+
+
+body .ui-multiselect-panel.ui-widget .ui-multiselect-header .ui-multiselect-filter-container .ui-inputtext {
+  color: #ffffff;
+  padding-left: 1.5em;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #79797d;
+}
+
+
+body .ui-multiselect-panel.ui-widget .ui-multiselect-header .ui-chkbox .ui-chkbox-box {
+  border-color: #908d8d;
+}
+
+
+body .ui-datatable .ui-datatable-thead > tr th {
+  padding: .625em .875em;
+  background-color:  #79797d;
+  color: white;
+}
+
+body .ui-datatable .ui-datatable-thead > tr th .ui-sortable-column-icon {
+  vertical-align: middle;
+  color: white;
+}
+
+i.ng-tns-c3-0.ui-icon-delete.fa{
+  color: #4d4948;
+}

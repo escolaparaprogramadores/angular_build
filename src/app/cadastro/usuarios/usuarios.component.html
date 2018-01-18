@@ -1,0 +1,304 @@
+<div class="ui-g">
+<div class="ui-g-12" style="margin-top: -15px;">
+
+
+<!--
+<h2><i class="material-icons" style="vertical-align:middle">person</i> Usuários {{lancamento.name}}</h2>
+-->
+
+<div class="card shadow-box ui-shadow-3">
+
+<form autocomplete="off">
+
+<p-growl [(value)]="msgs" [sticky]="true"></p-growl>
+
+</form>
+
+<p-toolbar>
+<div class="ui-toolbar-group-left btnpanel ui-g-12 ui-md-12">
+<button pButton type="button"   (click)=" getUserSistema()"  (click)="showDialogOpen(true, null)" label="Novo usuário" icon="ui-icon-person-add" class="btnNovo" id="id-btnNovo"></button>
+<i class="material-icons btnIcon" style="vertical-align:middle; color: #4d4948">apps</i>
+<p-splitButton icon="ui-icon-format-list-bulleted " label="Acões relacionadas" [model]="acoesRelacionadas" styleClass="ui-button-warning  btnAcoes"
+    id="id-btnAcoes"></p-splitButton>
+
+
+<div class="ui-g-12 ui-md-9" class="pesquisar" id="id-pesquisar">
+    <div class="ui-inputgroup">
+        <button pButton type="button" icon="ui-icon-search"></button>
+        <span class="md-inputfield">
+            <input #gb type="text" pInputText class="pesquisarInput" (keyup)="listar()">
+            <label>Pesquisar</label>
+        </span>
+    </div>
+</div>
+</div>
+
+<div class="ui-toolbar-group-right btnpanel">
+
+</div>
+
+</p-toolbar>
+
+
+
+<p-panel>
+     <!--DATA TABLE-->
+      <p-dataTable
+      [value]="usuarios"
+      [paginator]="true"
+      [rows]="10"
+      [responsive]="true"
+      [rowsPerPageOptions]="[3,5,10,20,30,50]"
+      [globalFilter]="gb"
+      selectionMode="single"
+      [(selection)]="lancamentoSelecionado"
+      dataKey="id"
+      #table
+      emptyMessage="Nenhum registro encontrado"
+      sortMode="multiple"
+      (onRowSelect)="onRowSelect($event)">
+
+
+
+    <p-column *ngFor="let col of cols" [sortable]="true" [field]="col.field" [header]="col.header"  [styleClass]="col.style" [filter]="false">
+        <ng-template let-user="rowData" let-ri="rowIndex"  pTemplate="body">
+            <div *ngIf="col.field=='created_at'">
+                <span class="col-data" >{{ user.created_at | date:"dd/MM/yyyy 'às' h'h':mm " }}</span>
+            </div>
+
+            <div *ngIf="col.field=='updated_at'">
+              <span class="col-data">{{ user.updated_at | date:"dd/MM/yyyy 'às' h'h':mm "}}</span>
+            </div>
+
+            <div *ngIf="col.field=='status'">
+                <span [style.color]="user.status === 1 ? 'green' : 'red'" >{{ user.status === 1 ? 'Ativo' : 'Inativo'}}</span>
+            </div>
+
+            <div *ngIf="col.field=='name'" >
+                <span  >{{ user.name }}</span>
+            </div>
+
+            <div *ngIf="col.field=='email'">
+                <span >{{ user.email }}</span>
+            </div>
+       <!--
+            <div *ngIf="col.field=='permissao'">
+              {{  user.permissao}}
+            </div>
+        -->
+          </ng-template>
+
+
+        </p-column>
+
+
+    <p-column styleClass="col-opcoes" header="AÇÕES">
+        <ng-template let-user="rowData" pTemplate="body">
+            <button pButton icon="ui-icon-edit" pTooltip="Editar" type="submit" tooltipPosition="top" (click)="showDialogOpen(true,user.id)"></button>
+            <button pButton icon="ui-icon-delete-forever" pButton (click)="confirmarExclusao(user)" pTooltip="Excluir" tooltipPosition="top"
+                class="ui-button-danger"></button>
+        </ng-template>
+    </p-column>
+
+    <p-footer class="totalRegistro">Total: {{ table.totalRecords }}  registro(s)</p-footer>
+
+
+    <p-footer>
+      <div style="text-align:right">
+          <p-multiSelect defaultLabel="Escolha" selectedItemsLabel="{0} Itens selecionados" [options]="columnOptions" [(ngModel)]="cols"></p-multiSelect>
+      </div>
+  </p-footer>
+   </p-dataTable>
+   <!--FIM DATATABLE-->
+</p-panel>
+
+
+<!-- CAIXA DE DIALOGO -->
+<p-dialog (onHide)="showDialogClose(false, form)"  header="Cadastro Usuário" [(visible)]="display" modal="modal"  [responsive]="true" [width]="800">
+<form #form="ngForm" autocomplete="off" >
+  <p-tabView  >
+
+<div class="ui-g" *ngIf="dadosUsuario">
+
+    <p-tabPanel header="Usuário" leftIcon="ui-icon-person-pin">
+        <div class="ui-g-12">
+            <div class="ui-g form-group">
+
+
+            <div class="ui-g-12 ui-md-12 ui-lg-12 status " >
+                <div class="ui-inputgroup">
+                    <label class="labelFormulario">{{ dadosUsuario.status === true ? 'Ativo' : 'Inativo'}}</label>
+                    <p-inputSwitch  [(ngModel)]="dadosUsuario.status" [ngModelOptions]="{standalone: 1}"></p-inputSwitch>
+                </div>
+            </div>
+
+        <!--
+          <div class="ui-g-12 ui-md-12 ui-lg-12 usuarioStatus " >
+              <div class="ui-inputgroup">
+                <p-selectButton name="status" [options]="status" class="bt"
+                  [(ngModel)]="dadosUsuario.status">
+              </p-selectButton>
+              </div>
+          </div>
+        -->
+        <div class="ui-g-12 ui-md-12 ui-lg-6">
+              <label class="labelFormulario">Empresa:</label>
+              <div class="ui-inputgroup">
+                  <span class="ui-inputgroup-addon"><i class="material-icons">domain</i></span>
+                  <p-dropdown [disabled]='false' required [options]="listaClienteCombo" class="drop"  placeholder="Selecione um cliente" [style]="{'width':'100%'}"
+                  [filter]="true" [autoWidth]="false" name="id_cliente" id="cliente" [(ngModel)]="dadosUsuario.id_cliente" required></p-dropdown>
+
+              </div>
+          </div>
+
+          <div class="ui-g-12 ui-md-12 ui-lg-6">
+              <label class="labelFormulario">Permissão:</label>
+              <div class="ui-inputgroup">
+                  <span class="ui-inputgroup-addon"><i class="material-icons">lock</i></span>
+                  <p-dropdown [options]="listaPermissaoCombo" class="drop" placeholder="Selecione uma Permissão" id="permissao" [style]="{'width':'100%'}"
+                  [filter]="true" required name="permissao" [(ngModel)]="dadosUsuario.permissao" ></p-dropdown>
+              </div>
+          </div>
+
+          <div class="ui-g-12 ui-md-12 ui-lg-6">
+              <div class="ui-inputgroup">
+                  <span class="ui-inputgroup-addon"><i class="material-icons">account_circle</i></span>
+                  <span class="md-inputfield md-inputfield-fill">
+                      <input autocomplete="off" id="nome" type="text" pInputText style="width: 100%; " #nome="ngModel"  required minlength="3" name="name"  [(ngModel)]="dadosUsuario.name" >
+                      <label for="nome">Nome:</label>
+
+                      <div class="ui-message ui-messages-error positionMenssageError" *ngIf="nome.errors && (nome.dirty || nome.touched)">
+                            *Mínimo de 3 caracteres.
+                      </div>
+
+                  </span>
+              </div>
+
+          </div>
+
+          <div class="ui-g-12 ui-md-12 ui-lg-6">
+              <div class="ui-inputgroup">
+                  <span class="ui-inputgroup-addon"><i class="material-icons">email</i></span>
+                  <span class="md-inputfield md-inputfield-fill l">
+                      <input  #email="ngModel" email required autocomplete="off" id="email" type="text" pInputText style="width: 100%; " name="email"  [(ngModel)]="dadosUsuario.email">
+                      <label class="l" for="email">Email:</label>
+
+                     <div class="ui-message ui-messages-error positionMenssageError" *ngIf="email.errors && (email.dirty || email.touched)">
+                        *Email inválido!
+                     </div>
+
+                  </span>
+              </div>
+          </div>
+
+              <div class="ui-g-12 ui-md-12 ui-lg-6">
+                  <div class="ui-inputgroup">
+                      <span class="ui-inputgroup-addon" (click)="mostrarSenhaTrueOrFalse()"><i class="material-icons">{{iconeSenha}}</i></span>
+                      <span class="md-inputfield md-inputfield-fill" *ngIf="!mostrarSenha" >
+                          <input #senha="ngModel"  autocomplete="off" required="{{ senhaTrue }}" minlength="6"  promptLabel="Digite sua senha." weakLabel="Fraca" mediumLabel="Média" strongLabel="Forte" autocomplete="off" class="ng-dirty ng-invalid"  autocomplete="off" id="senha" pPassword type="password" pInputText style="width: 100%" name="senha"  [(ngModel)]="dadosUsuario.senha" pTooltip="Mínimo de 6 caracteres." tooltipEvent="focus" tooltipPosition="top">
+                          <label  for="senha">Senha:</label>
+
+                          <div class="ui-message ui-messages-error positionMenssageError" *ngIf="senha.errors && (senha.dirty || senha.touched)">
+                                *Sua senha deve ter no mínimo 6 caracteres.
+                          </div>
+
+                      </span>
+
+                      <span class="md-inputfield md-inputfield-fill" *ngIf="mostrarSenha" >
+                          <input #senha="ngModel"  autocomplete="off" required="{{ senhaTrue }}" minlength="6"  promptLabel="Digite sua senha." weakLabel="Fraca" mediumLabel="Média" strongLabel="Forte" autocomplete="off" class="ng-dirty ng-invalid"  autocomplete="off" id="senha" pPassword type="text" pInputText style="width: 100%" name="senha"  [(ngModel)]="dadosUsuario.senha" pTooltip="Mínimo de 6 caracteres." tooltipEvent="focus" tooltipPosition="top">
+                          <label  for="senha">Senha:</label>
+
+                          <div class="ui-message ui-messages-error positionMenssageError" *ngIf="senha.errors && (senha.dirty || senha.touched)">
+                                *Sua senha deve ter no mínimo 6 caracteres.
+                          </div>
+
+                      </span>
+                  </div>
+              </div>
+
+              <div class="ui-g-12 ui-md-12 ui-lg-6">
+                  <div class="ui-inputgroup">
+                      <span class="ui-inputgroup-addon" (click)="mostrarSenhaTrueOrFalse()"><i class="material-icons">{{iconeSenha}}</i></span>
+                      <span class="md-inputfield md-inputfield-fill" *ngIf="!mostrarSenha">
+                        <input  required="{{ senhaTrue }}" minlength="6" promptLabel="Repita sua senha." weakLabel="Fraca" mediumLabel="Média" strongLabel="Forte" #password="ngModel" class="ng-dirty ng-invalid"  autocomplete="off" id="confirmarSenha"  pPassword type="password" pInputText style="width: 100%" name="password"  [(ngModel)]="dadosUsuario.password">
+                        <label for="confirmarSenha">Confirmar senha:</label>
+
+                        <div class="ui-message ui-messages-error positionMenssageError" *ngIf="password.errors && (password.dirty || password.touched)">
+                               *Senha não confere!
+                         </div>
+
+                      </span>
+
+                      <span class="md-inputfield md-inputfield-fill" *ngIf="mostrarSenha">
+                          <input  required="{{ senhaTrue }}" minlength="6" promptLabel="Repita sua senha." weakLabel="Fraca" mediumLabel="Média" strongLabel="Forte" #password="ngModel" class="ng-dirty ng-invalid"  autocomplete="off" id="confirmarSenha"  pPassword type="text" pInputText style="width: 100%" name="password"  [(ngModel)]="dadosUsuario.password">
+                          <label for="confirmarSenha">Confirmar senha:</label>
+
+                          <div class="ui-message ui-messages-error positionMenssageError" *ngIf="password.errors && (password.dirty || password.touched)">
+                                 *Senha não confere!
+                           </div>
+
+                        </span>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <p-fieldset legend="Outras Informações" toggleable="true" collapsed = "true">
+
+        <div class="ui-g-12 ui-md-12 ui-lg-6"  >
+            <div class="ui-inputgroup">
+                <span class="ui-inputgroup-addon"><i class="material-icons">account_circle</i></span>
+                <span class="md-inputfield md-inputfield-fill">
+                    <input disabled id="nameuser" type="text" pInputText style="width: 100%; " name="nameuser" [(ngModel)]="dadosUsuario.nameuser">
+                    <label for="nameuser">Criado por:</label>
+                </span>
+            </div>
+        </div>
+
+
+          <div class="ui-g-12 ui-md-12 ui-lg-3">
+              <div class="ui-inputgroup">
+                  <span class="ui-inputgroup-addon"><i class="material-icons">event</i></span>
+                  <span class="md-inputfield md-inputfield-fill l">
+                      <p-calendar [disabled]="true" [showTime]="true" id="created_at" [(ngModel)]="dadosUsuario.created_at" name="created_at" dateFormat="dd/mm/yy"
+                        [inline]="false" [locale]="pt" [readonlyInput]="true" [showIcon]="false" >
+                        </p-calendar>
+                      <label class="l" for="created_at">Data criação:</label>
+                  </span>
+              </div>
+          </div>
+
+
+
+          <div class="ui-g-12 ui-md-12 ui-lg-3">
+              <div class="ui-inputgroup">
+                  <span class="ui-inputgroup-addon"><i class="material-icons">event</i></span>
+                  <span class="md-inputfield md-inputfield-fill l">
+                      <p-calendar [disabled]="true" [showTime]="true" id="updated_at" [(ngModel)]="dadosUsuario.updated_at" name="updated_at" dateFormat="dd/mm/yy"
+                        [inline]="false" [locale]="pt" [readonlyInput]="true" [showIcon]="false" >
+                        </p-calendar>
+                      <label class="l" for="updated_at">Data atualização:</label>
+                  </span>
+              </div>
+          </div>
+      </p-fieldset>
+
+    </p-tabPanel>
+
+    <br/>
+
+  <!--BOTÕES-->
+    <div class="ui-g-12" style="text-align: left">
+        <button class="btnSalvar" pButton type="submit"  icon="fa-check" label="Salvar" (click)="salvar(form)" [disabled]="form.invalid || dadosUsuario.password !== dadosUsuario.senha  " ></button>
+        <button pButton type="text"  icon="fa-close" label="Fechar"    (click)="showDialogClose(false, form)" class="btnFechar"></button>
+    </div>
+
+</div>
+    <p-messages [(value)]="msgsTelaCadastro"></p-messages>
+</p-tabView>
+</form>
+</p-dialog>
+<!-- FIM CAIXA DE DIALOGO -->
+</div>
+</div>
+</div>

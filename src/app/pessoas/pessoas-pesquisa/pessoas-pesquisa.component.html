@@ -1,0 +1,116 @@
+<div class="ui-g">
+  <div class="ui-g-12" style="margin-top: -15px;">
+
+      <h1 ><i class="material-icons" style="vertical-align:middle">people</i> Funcionários</h1>
+
+      <div class="card shadow-box ui-shadow-3">
+
+            <form autocomplete="off" (ngSubmit)="pesquisar()">
+
+              <p-growl [(value)]="msgs"></p-growl>
+
+            </form>
+
+        
+
+
+            <p-toolbar>
+              <div class="ui-toolbar-group-left btnpanel">
+                  <button pButton type="button"   (click)="showDialog()"  label="Novo funcionário" icon="fa-plus"></button>
+                  <i class="material-icons" style="vertical-align:middle">apps</i>
+                      <p-splitButton icon="ui-icon-format-list-bulleted" label="Acões relacionadas"  [model]="acoesRelacionadas" styleClass="ui-button-warning"></p-splitButton>
+              </div>
+
+          </p-toolbar>
+
+
+          <br/>
+          <div class="ui-g form-group">
+            <div class="ui-g-12 ui-md-12">
+                <div class="ui-inputgroup">
+                    <button pButton type="button" icon="ui-icon-search"></button>
+                    <span class="md-inputfield">
+                        <input #gb type="text" pInputText class="pesquisar" style="border-radius: 6px;"> 
+                        <label>Pesquisar</label>        
+                    </span>
+                </div>
+            </div>
+          <br/>
+
+
+          <p-panel>
+
+
+
+      <p-dataTable
+      [value]="pessoas"
+      [paginator]="true"
+      [rows]="5"
+      [responsive]="true"
+      [rowsPerPageOptions]="[3,5,10,15]"
+      [globalFilter]="gb"
+      selectionMode="single"
+      [(selection)]="selectedLancamento"
+      dataKey="nome"
+      #tabela
+      emptyMessage="Nenhum registro encontrado"
+      [lazy]="false"
+      sortMode="multiple">
+
+
+        <p-footer >
+          <div style="text-align:right">
+              <p-multiSelect  [options]="columnOptions"  [(ngModel)]="cols"></p-multiSelect>
+          </div>
+        </p-footer>
+
+            <p-column *ngFor="let col of cols" [styleClass]="col.style"  [sortable]="true" [field]="col.field" [header]="col.header" [filter]="false"></p-column>
+
+<!--
+         <p-column field="nome" header="Nome"  [filter]="false" [sortable]="true"></p-column>
+
+          <p-column field="endereco.cidade" header="Cidade" [filter]="false" styleClass="col-cidade" [sortable]="true"></p-column>
+
+          <p-column field="endereco.estado" header="Estado" [filter]="false" styleClass="col-estado" [sortable]="true"></p-column>
+-->
+          <p-column field="ativo" header="Status" styleClass="col-status" [sortable]="true">
+            <ng-template let-pes="rowData" pTemplate="body">
+                <a href="javascript:;" [pTooltip]="pes.ativo ? 'Desativar' : 'Ativar'"
+                    tooltipPosition="top"  (click)="alternarStatus(pes)">
+                    <span [style.color]="pes.ativo ? 'green' : 'red'">{{ pes.ativo ? 'Ativo' : 'Inativo' }}</span>
+
+                </a>
+
+            </ng-template>
+          </p-column>
+
+          <p-column styleClass="col-opcoes" header="Ações">
+            <ng-template let-pessoa="rowData" pTemplate="body">
+
+
+              <button pButton icon="ui-icon-edit" pTooltip="Editar" tooltipPosition="top"></button>
+              <button pButton icon="ui-icon-delete-forever" pButton (click)="confirmarExclusao(pessoa)" pTooltip="Excluir" tooltipPosition="top" class="ui-button-danger"></button>
+            
+            
+            </ng-template>
+          </p-column>
+
+          <p-footer>Total: {{ total}} registros </p-footer>
+
+      </p-dataTable>
+    </p-panel>
+
+
+
+
+
+
+    <p-dialog  [(visible)]="display" modal="modal" [responsive]="true" [width]="800">
+
+    </p-dialog>
+
+
+
+      </div>
+      </div>
+      </div>
